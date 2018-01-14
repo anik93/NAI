@@ -1,0 +1,17 @@
+logging:
+  level:
+    org.springframework.web: ERROR
+    com.simpleproject: ERROR
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/nai?useSSL=false
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
