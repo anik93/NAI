@@ -7,10 +7,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -29,22 +28,21 @@ public class User extends BasicEntity {
 	@NotNull
 	@Column(unique = true)
 	@Length(min = 1, max = 255)
-	@Pattern(regexp = "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,4}")
 	private String mail;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private Set<Role> roles = new HashSet<>();
+	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<Address> addresses = new HashSet<>();
 
 	public User() {
 		super();
 	}
 
-	public User(String name, String mail, String password, Set<Role> roles) {
+	public User(String name, String mail, String password, Set<Address> addresses) {
 		super();
 		this.name = name;
 		this.mail = mail;
 		this.password = password;
-		this.roles = roles;
+		this.addresses = addresses;
 	}
 
 	public String getPassword() {
@@ -63,12 +61,17 @@ public class User extends BasicEntity {
 		this.mail = mail;
 	}
 
-	public Set<Role> getRoles() {
-		return roles;
+	public Set<Address> getAddresses() {
+		return addresses;
 	}
 
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
+	public void setAddresses(Set<Address> addresses) {
+		this.addresses = addresses;
+	}
+
+	@Override
+	public String toString() {
+		return "User [password=" + password + ", mail=" + mail + ", addresses=" + addresses + "]";
 	}
 
 }

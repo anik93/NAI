@@ -1,15 +1,18 @@
 package com.simpleproject.service.impl;
 
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.simpleproject.domain.Role;
+import com.simpleproject.domain.Address;
 import com.simpleproject.domain.User;
-import com.simpleproject.repository.RoleRepository;
+import com.simpleproject.dto.UserDTO;
+import com.simpleproject.repository.AddressRepository;
 import com.simpleproject.repository.UserRepository;
+import com.simpleproject.service.DTOService;
 import com.simpleproject.service.UserService;
 
 @Service
@@ -19,7 +22,10 @@ public class UserServiceImpl implements UserService {
 	private UserRepository userRepository;
 
 	@Autowired
-	private RoleRepository roleRepository;
+	private AddressRepository addressRepository;
+
+	@Autowired
+	private DTOService dtoService;
 
 	@Override
 	public User getByName(String name) throws Exception {
@@ -28,10 +34,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User saveUser(String name, String mail, String password) {
-		Role role = roleRepository.findOne((long) 1);
-		Set<Role> roles = new HashSet<>();
-		roles.add(role);
-		return userRepository.save(new User(name, mail, password, roles));
+		return userRepository.save(new User(name, mail, password, new HashSet<>()));
 	}
 
 	@Override
@@ -45,8 +48,26 @@ public class UserServiceImpl implements UserService {
 		if (name != null)
 			user.setName(name);
 		if (mail != null)
-			user.setMail(mail + "@dw.dw");
+			user.setMail(mail);
 		return userRepository.save(user);
+	}
+
+	@Override
+	public List<UserDTO> getAll() {
+		return userRepository.findAll().stream()
+				.map(x -> dtoService.<User, UserDTO>generateDTOResponse(x, UserDTO.class)).collect(Collectors.toList());
+	}
+
+	@Override
+	public User getById(Long id) {
+		return userRepository.findOne(id);
+	}
+
+	@Override
+	public void addAddressToUser(Long id, Address address) {
+		User user = userRepository.findOne(id);
+		address.setUser(user);
+		addressRepository.save(address);
 	}
 
 }

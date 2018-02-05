@@ -20,7 +20,7 @@ public class BasicEntity {
 	@Column(unique = true)
 	@Length(min = 4, max = 255)
 	protected String name;
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -31,6 +31,11 @@ public class BasicEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return "BasicEntity [id=" + id + ", name=" + name + "]";
 	}
 
 }
